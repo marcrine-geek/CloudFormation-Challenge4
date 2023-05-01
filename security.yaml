@@ -1,0 +1,13 @@
+Resources:            
+    ALBSecurityGroup:
+      Type: "AWS::EC2::SecurityGroup"
+      Properties:
+          GroupDescription: "security group for ALB"
+          GroupName: "test-ALB-SG"
+          VpcId: !ImportValue VPC
+          SecurityGroupIngress: 
+            - 
+              CidrIp: "0.0.0.0/0"
+              FromPort: 80
+              IpProtocol: "tcp"
+              ToPort: 80

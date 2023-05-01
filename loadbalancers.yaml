@@ -1,0 +1,10 @@
+Resources:
+  ApplicationLoadBalancer:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      Name: "cloudforce-loadBalancer"
+      Scheme: "internet-facing"
+      Type: "application"
+      Subnets: 
+        - !ImportValue PublicSubnetA
+        - !ImportValue PublicSubnetB
