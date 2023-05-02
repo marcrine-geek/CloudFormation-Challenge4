@@ -8,3 +8,40 @@ Resources:
       Subnets: 
         - !ImportValue PublicSubnetA
         - !ImportValue PublicSubnetB
+      SecurityGroups: 
+        - !ImportValue ALBSecurityGroup
+      IpAddressType: "ipv4"
+
+  Listener:
+   Type: "AWS::ElasticLoadBalancingV2::Listener"
+   Properties:
+    DefaultActions:
+       - Type: forward
+         TargetGroupArn: !Ref TargetGroup
+    LoadBalancerArn: !Ref ApplicationLoadBalancer
+    Port: 80
+    Protocol: "HTTP"
+
+  TargetGroup:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+        HealthCheckPath: "/"
+        Port: 80
+        Protocol: "HTTP"
+        HealthCheckPort: "traffic-port"
+        HealthCheckProtocol: "HTTP"
+        UnhealthyThresholdCount: 2
+        TargetType: "instance"
+        Matcher: 
+            HttpCode: "200"
+        HealthyThresholdCount: 5
+        VpcId: !ImportValue VPC
+        Name: "target-group-1"
+        HealthCheckEnabled: true
+
+Outputs:
+  ExportTargetGroup:
+    Description: Export Target groups
+    Value: !Ref TargetGroup
+    Export: 
+      Name: TargetGroup

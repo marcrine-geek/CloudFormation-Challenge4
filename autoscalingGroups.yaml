@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  MyLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: Wk7LaunchTemplate
+      LaunchTemplateData:
+        NetworkInterfaces:
+          - DeviceIndex: 0
+            AssociatePublicIpAddress: true
+            Groups:
+              - !ImportValue EC2SecurityGroup
+        Placement:
+          Tenancy: default
+        ImageId: ami-0557a15b87f6559cf
+        InstanceType: t2.micro
+        UserData:
+          Fn::Base64:
+            !Sub |
+              #!/bin/bash
+              sudo apt update
+              sudo apt install apache2
+      
+
+  MyASG:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
+      MinSize: 2
+      MaxSize: 5
+      DesiredCapacity: 2
+      VPCZoneIdentifier:
+        - !ImportValue PublicSubnetA
+        - !ImportValue PublicSubnetB
+      TargetGroupARNs: 
+        - !ImportValue TargetGroup
