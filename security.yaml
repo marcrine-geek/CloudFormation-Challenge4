@@ -13,22 +13,13 @@ Resources:
               ToPort: 80
 
     EC2SecurityGroup:
-      Type: "AWS::EC2::SecurityGroup"
+      Type: AWS::EC2::SecurityGroupIngress
       Properties:
-          GroupDescription: "security group for ALB"
-          GroupName: "EC2-SG"
-          VpcId: !ImportValue VPC
-          SecurityGroupIngress: 
-            - 
-              CidrIp: "0.0.0.0/0"
-              FromPort: 80
-              IpProtocol: "tcp"
-              ToPort: 80
-            - 
-              CidrIp: "0.0.0.0/0"
-              FromPort: 22
-              IpProtocol: "tcp"
-              ToPort: 22
+        IpProtocol: tcp
+        FromPort: 0
+        ToPort: 65535
+        SourceSecurityGroup:
+          - !GetAtt "ALBSecurityGroup.GroupId"
 
 Outputs:
   ExportALBsecurity:
